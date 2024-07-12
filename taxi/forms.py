@@ -5,10 +5,10 @@ from django.core.exceptions import ValidationError
 from taxi.models import Driver, Car
 
 
-class DriverUpdateForm(forms.ModelForm):
+class DriverLicenseUpdateForm(forms.ModelForm):
     class Meta:
         model = Driver
-        fields = ("license_number", "first_name", "last_name")
+        fields = ("license_number",)
 
     def clean_license_number(self) -> str:
         license_number: str = self.cleaned_data["license_number"]
@@ -28,14 +28,13 @@ class DriverUpdateForm(forms.ModelForm):
         return license_number
 
 
-class DriverCreationForm(UserCreationForm, DriverUpdateForm):
+class DriverCreationForm(UserCreationForm, DriverLicenseUpdateForm):
     license_number = forms.CharField()
 
     class Meta:
         model = Driver
         fields = (UserCreationForm.Meta.fields
-                  + ("license_number", "first_name", "last_name")
-                  )
+                  + ("license_number", "first_name", "last_name"))
 
 
 class CarCreationForm(forms.ModelForm):
