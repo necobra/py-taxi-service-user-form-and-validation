@@ -4,8 +4,15 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import DriverCreationForm, DriverLicenseUpdateForm
-from .models import Driver, Car, Manufacturer
+from .forms import (
+    DriverCreationForm,
+    DriverLicenseUpdateForm
+)
+from .models import (
+    Driver,
+    Car,
+    Manufacturer
+)
 
 
 @login_required
@@ -87,7 +94,7 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
     model = Driver
-    queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
+    queryset = Driver.objects.prefetch_related("cars__manufacturer")
 
 
 class DriverCreateView(LoginRequiredMixin, generic.CreateView):
@@ -114,11 +121,11 @@ class AddCarToDriver(LoginRequiredMixin, generic.UpdateView):
 
 @login_required
 def add_cur_driver_to_car(request, pk: int):
-    Car.objects.get(id=pk).drivers.add(request.user)
+    Car.get_object_or_404(Car, id=pk).drivers.add(request.user)
     return redirect("taxi:car-detail", pk)
 
 
 @login_required
 def del_cur_driver_to_car(request, pk: int):
-    Car.objects.get(id=pk).drivers.remove(request.user)
+    Car.get_object_or_404(Car, id=pk).drivers.remove(request.user)
     return redirect("taxi:car-detail", pk)

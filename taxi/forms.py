@@ -2,7 +2,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from taxi.models import Driver, Car
+from taxi.models import (
+    Driver,
+    Car
+)
 
 
 class DriverLicenseUpdateForm(forms.ModelForm):
@@ -18,12 +21,11 @@ class DriverLicenseUpdateForm(forms.ModelForm):
             )
         if not (license_number[:3].isalpha() and license_number[:3].isupper()):
             raise ValidationError(
-                "First 3 characters of a licensese number must be uppercase "
-                "letters"
+                "First 3 characters must be uppercase letters"
             )
         if not license_number[-5:].isnumeric():
             raise ValidationError(
-                "Last 5 characters of a licensese number must be digits"
+                "Last 5 characters must be digits"
             )
         return license_number
 
@@ -33,8 +35,9 @@ class DriverCreationForm(UserCreationForm, DriverLicenseUpdateForm):
 
     class Meta:
         model = Driver
-        fields = (UserCreationForm.Meta.fields
-                  + ("license_number", "first_name", "last_name"))
+        fields = UserCreationForm.Meta.fields + (
+            "license_number", "first_name", "last_name"
+        )
 
 
 class CarCreationForm(forms.ModelForm):
